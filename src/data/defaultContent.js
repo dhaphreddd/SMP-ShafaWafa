@@ -58,7 +58,7 @@ export const defaultContent = {
     primaryTarget: 'spmb',
     secondaryLabel: 'Jelajahi Program',
     secondaryTarget: 'program',
-    imageUrl: '/images/masterplan.jpeg',
+    imageUrl: '/images/masterplan.webp',
     imageAlt: 'Masterplan Kawasan Sekolah Terpadu Shafa Wafa',
     imageCaption: 'Masterplan Kawasan Sekolah Terpadu SMP Shafa Wafa — Tegalagung, Semanding, Kab. Tuban',
     floatingLabel: 'Tahun Ajaran Perdana',
@@ -364,7 +364,7 @@ export const defaultContent = {
     description: 'Dokumentasi visual lingkungan sekolah terpadu, sarana kepesantrenan, dan pembiasaan adab harian santri SMP Shafa Wafa Tuban.',
     items: [
       {
-        imageUrl: '/images/masterplan.jpeg',
+        imageUrl: '/images/masterplan.webp',
         title: 'Masterplan Kawasan Sekolah Terpadu',
         category: 'Kawasan',
       },

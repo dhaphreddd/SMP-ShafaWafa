@@ -2,5 +2,6 @@ User-agent: *
 Allow: /
 Disallow: /*page=admin
 
-Sitemap: sitemap.xml
+Sitemap: https://smp.shafawafa.my.id/sitemap.xml
+
 

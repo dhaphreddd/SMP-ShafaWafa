@@ -109,7 +109,6 @@ export function Header({ content, onNavigate, currentPage = 'home' }) {
         <button
           className="brand-button"
           onClick={() => onNavigate && onNavigate('home')}
-          aria-label="SMP Shafa Wafa, beranda"
         >
           <Brand content={content} />
         </button>
@@ -226,23 +225,27 @@ export function Hero({ content, onNavigate }) {
               tabIndex={0}
               onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') setShowModal(true); }}
             >
-              <img
-                src={masterplanSrc}
-                alt={hero.imageAlt || 'Masterplan Kawasan Sekolah Terpadu SMP Shafa Wafa'}
-                fetchPriority="high"
-                decoding="async"
-                referrerPolicy="no-referrer"
-                width="1103"
-                height="872"
-                className="hero-image"
-                onError={(e) => {
-                  const match = hero.imageUrl && hero.imageUrl.match(/[-\w]{25,}/);
-                  if (match && !e.currentTarget.dataset.fallbackTried) {
-                    e.currentTarget.dataset.fallbackTried = 'true';
-                    e.currentTarget.src = `https://lh3.googleusercontent.com/d/${match[0]}=w1600`;
-                  }
-                }}
-              />
+              <picture className="hero-picture">
+                <source type="image/webp" media="(max-width: 768px)" srcSet={resolveAssetUrl('/images/masterplan-mobile.webp')} />
+                <source type="image/webp" srcSet={resolveAssetUrl('/images/masterplan.webp')} />
+                <img
+                  src={masterplanSrc}
+                  alt={hero.imageAlt || 'Masterplan Kawasan Sekolah Terpadu SMP Shafa Wafa'}
+                  fetchPriority="high"
+                  decoding="async"
+                  referrerPolicy="no-referrer"
+                  width="1103"
+                  height="872"
+                  className="hero-image"
+                  onError={(e) => {
+                    const match = hero.imageUrl && hero.imageUrl.match(/[-\w]{25,}/);
+                    if (match && !e.currentTarget.dataset.fallbackTried) {
+                      e.currentTarget.dataset.fallbackTried = 'true';
+                      e.currentTarget.src = `https://lh3.googleusercontent.com/d/${match[0]}=w1600`;
+                    }
+                  }}
+                />
+              </picture>
               <div className="hero-zoom-badge">
                 <Eye size={14} />
                 <span>Lihat Gambar Penuh</span>
@@ -1043,7 +1046,7 @@ export function GallerySection({ data }) {
 
         <div className="gallery-grid">
           {filteredItems.map((item, idx) => (
-            <article
+            <div
               className="gallery-card"
               key={idx}
               onClick={() => setSelectedImg(item)}
@@ -1070,11 +1073,11 @@ export function GallerySection({ data }) {
                 <div className="gallery-overlay">
                   {item.category && <span className="gallery-badge">{item.category}</span>}
                   <div className="gallery-card-info">
-                    <h4>{item.title}</h4>
+                    <h3>{item.title}</h3>
                   </div>
                 </div>
               </div>
-            </article>
+            </div>
           ))}
         </div>
 
