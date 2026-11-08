@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="utf-8" />
+    <title>SMP Shafa Wafa</title>
+    <script>
+      // Redirect sub-path requests (e.g. /spmb, /admin) back to index.html with ?page= param on GitHub Pages
+      (function () {
+        var path = window.location.pathname;
+        var segments = path.split('/').filter(Boolean);
+        var last = segments[segments.length - 1] || '';
+        var knownPages = ['admin', 'spmb'];
+        var targetPage = knownPages.indexOf(last) !== -1 ? last : null;
+        var baseSegments = targetPage ? segments.slice(0, -1) : segments;
+        var basePath = '/' + baseSegments.join('/') + (baseSegments.length ? '/' : '');
+        var redirectUrl = basePath + (targetPage ? '?page=' + targetPage : '') + window.location.hash;
+        window.location.replace(redirectUrl);
+      })();
+    </script>
+  </head>
+  <body>
+    <p>Mengalihkan ke halaman SMP Shafa Wafa...</p>
+  </body>
+</html>
+

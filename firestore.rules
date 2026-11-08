@@ -1,0 +1,75 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isAdmin() {
+      return isSignedIn()
+        && exists(/databases/$(database)/documents/admins/$(request.auth.uid))
+        && get(/databases/$(database)/documents/admins/$(request.auth.uid)).data.active == true;
+    }
+
+    function interestFormIsEnabled() {
+      return !exists(/databases/$(database)/documents/siteContent/public)
+        || get(/databases/$(database)/documents/siteContent/public).data.content.admissions.interestFormEnabled == true;
+    }
+
+    function validLead() {
+      return request.resource.data.keys().hasAll([
+          'parentName', 'studentName', 'phone', 'currentSchool',
+          'needsDorm', 'message', 'source', 'createdAt'
+        ])
+        && request.resource.data.keys().hasOnly([
+          'parentName', 'studentName', 'phone', 'currentSchool',
+          'needsDorm', 'message', 'source', 'createdAt'
+        ])
+        && request.resource.data.parentName is string
+        && request.resource.data.parentName.size() > 0
+        && request.resource.data.parentName.size() <= 100
+        && request.resource.data.studentName is string
+        && request.resource.data.studentName.size() > 0
+        && request.resource.data.studentName.size() <= 100
+        && request.resource.data.phone is string
+        && request.resource.data.phone.matches('^[0-9+() -]{8,24}$')
+        && request.resource.data.currentSchool is string
+        && request.resource.data.currentSchool.size() <= 160
+        && request.resource.data.needsDorm in ['ya', 'tidak', 'belum-tahu']
+        && request.resource.data.message is string
+        && request.resource.data.message.size() <= 800
+        && request.resource.data.source == 'website-interest-form'
+        && request.resource.data.createdAt == request.time;
+    }
+
+    // Public website content: anyone may read this one published document.
+    match /siteContent/{documentId} {
+      allow read: if documentId == 'public';
+      allow create, update: if documentId == 'public'
+        && isAdmin()
+        && request.resource.data.keys().hasAll(['content', 'updatedAt', 'updatedBy'])
+        && request.resource.data.content is map
+        && request.resource.data.updatedBy == request.auth.uid;
+      allow delete: if false;
+    }
+
+    // Admin membership documents must be created manually by the project owner.
+    // The web client cannot grant itself admin access.
+    match /admins/{uid} {
+      allow read: if isSignedIn() && request.auth.uid == uid;
+      allow write: if false;
+    }
+
+    // Public users can only create validated early-interest records.
+    // Viewing, editing, and deleting records requires an authorized admin account.
+    match /spmbLeads/{leadId} {
+      allow create: if interestFormIsEnabled() && validLead();
+      allow read, update, delete: if isAdmin();
+    }
+
+    // Explicit default-deny for all other paths.
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

@@ -1,0 +1,12 @@
+node_modules/
+dist/
+.env
+.env.local
+.env.*.local
+.firebase/
+.DS_Store
+
+# Raw design mockups and print documents (>50MB)
+*.pdf
+stitch_website_smp_shafa_wafa/
+Ketua - Yai Ulum.png
