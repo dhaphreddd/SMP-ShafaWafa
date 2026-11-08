@@ -41,7 +41,7 @@ jobs:
         run: |
           REPO_NAME="${GITHUB_REPOSITORY#*/}"
           BASE_PATH="/${REPO_NAME}/"
-          if [[ "$REPO_NAME" == "${GITHUB_REPOSITORY%%/*}.github.io" ]]; then BASE_PATH="/"; fi
+          if [[ -f public/CNAME || "$REPO_NAME" == "${GITHUB_REPOSITORY%%/*}.github.io" ]]; then BASE_PATH="/"; fi
           npm run build -- --base="$BASE_PATH"
       - name: Setup Pages
         uses: actions/configure-pages@v5
