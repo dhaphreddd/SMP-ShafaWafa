@@ -85,7 +85,7 @@ export default function App() {
 
   return (
     <>
-      <HomeView content={content} onNavigate={navigate} />
+      <HomeView content={content} onNavigate={navigate} page={page} />
       {contentLoading && (
         <div className="quiet-loader" aria-label="Memuat konten">
           <span />

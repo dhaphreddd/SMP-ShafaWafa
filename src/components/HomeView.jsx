@@ -1,7 +1,7 @@
 import React, { Suspense, lazy, useEffect, useRef, useState } from 'react';
 import {
   ArrowDown, ArrowRight, ArrowUpRight, BookOpen, Building2, CalendarDays, CheckCircle2,
-  ChevronDown, Cpu, GraduationCap, HeartHandshake, Languages, Laptop, MapPin, Menu,
+  ChevronDown, ChevronRight, Cpu, GraduationCap, HeartHandshake, Languages, Laptop, MapPin, Menu,
   MessageCircle, ShieldCheck, Sparkles, Users, X, Mail, Phone, Instagram, ExternalLink,
   Compass, CircleHelp, Scale, Trees, Library, Hotel, Trophy,
   Clock, Check, Info, FileText, Lock, Eye, Radio, Smartphone, Monitor, ArrowUp, Quote, Image as ImageIcon,
@@ -36,6 +36,25 @@ function IconFor({ name, size = 22, className = '' }) {
   return <Icon size={size} strokeWidth={1.8} className={className} aria-hidden="true" />;
 }
 
+export function PageBanner({ title, subtitle, breadcrumb, onNavigate }) {
+  return (
+    <div className="page-hero-banner">
+      <div className="page-hero-pattern" aria-hidden="true" />
+      <div className="container page-hero-container">
+        <nav className="page-breadcrumb" aria-label="Navigasi Halaman">
+          <button type="button" className="breadcrumb-link" onClick={() => onNavigate && onNavigate('home')}>
+            Beranda
+          </button>
+          <ChevronRight size={13} className="breadcrumb-separator" />
+          <span className="breadcrumb-current">{breadcrumb}</span>
+        </nav>
+        <h1 className="page-hero-title">{title}</h1>
+        {subtitle && <p className="page-hero-subtitle">{subtitle}</p>}
+      </div>
+    </div>
+  );
+}
+
 export function Brand({ content, compact = false }) {
   const logoSrc = resolveAssetUrl(content.brand?.logoUrl || '/images/logo.jpeg');
   return (
@@ -68,16 +87,18 @@ export function Brand({ content, compact = false }) {
 export function Header({ content, onNavigate, currentPage = 'home' }) {
   const [menuOpen, setMenuOpen] = useState(false);
 
-  const scrollTo = (target) => {
+  const navItems = [
+    { target: 'home', label: 'Beranda' },
+    { target: 'tentang', label: 'Profil' },
+    { target: 'program', label: 'Program' },
+    { target: 'fasilitas', label: 'Fasilitas' },
+    { target: 'galeri', label: 'Galeri' },
+  ];
+
+  const handleNavClick = (target) => {
     setMenuOpen(false);
-    const resolvedTarget = target === 'kampus-3d' ? 'gedung-3d' : target;
-    if (currentPage !== 'home') {
-      if (onNavigate) onNavigate('home');
-      window.setTimeout(() => {
-        document.getElementById(resolvedTarget)?.scrollIntoView({ behavior: 'smooth' });
-      }, 90);
-    } else {
-      document.getElementById(resolvedTarget)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    if (onNavigate) {
+      onNavigate(target);
     }
   };
 
@@ -107,6 +128,7 @@ export function Header({ content, onNavigate, currentPage = 'home' }) {
       {/* Main Navigation Bar */}
       <div className="container header-main-inner">
         <button
+          type="button"
           className="brand-button"
           onClick={() => onNavigate && onNavigate('home')}
         >
@@ -114,37 +136,42 @@ export function Header({ content, onNavigate, currentPage = 'home' }) {
         </button>
 
         <nav className={`main-nav ${menuOpen ? 'nav-open' : ''}`} aria-label="Navigasi utama">
-          {(content.header?.navItems || [])
-            .filter((item) => item.target !== 'kampus-3d' && item.label?.toLowerCase() !== 'kampus 3d')
-            .map((item) => (
-            <button
-              key={item.target}
-              className="nav-link"
-              onClick={() => scrollTo(item.target)}
-            >
-              {item.label}
-            </button>
-          ))}
+          {navItems.map((item) => {
+            const isActive = currentPage === item.target;
+            return (
+              <button
+                key={item.target}
+                type="button"
+                className={`nav-link ${isActive ? 'is-active' : ''}`}
+                onClick={() => handleNavClick(item.target)}
+              >
+                {item.label}
+              </button>
+            );
+          })}
           <button
+            type="button"
             className="nav-mobile-cta"
             onClick={() => {
               setMenuOpen(false);
               if (onNavigate) onNavigate('spmb');
             }}
           >
-            {content.header?.ctaLabel || 'Info SPMB'}
+            {content.header?.ctaLabel || 'Daftar SPMB Online'}
           </button>
         </nav>
 
         <div className="header-actions">
           <button
-            className="button button-primary header-cta"
+            type="button"
+            className="button button-gold header-cta"
             onClick={() => onNavigate && onNavigate('spmb')}
           >
-            <span>{content.header?.ctaLabel || 'Info SPMB'}</span>
+            <span>{content.header?.ctaLabel || 'Daftar SPMB'}</span>
             <ArrowUpRight size={16} />
           </button>
           <button
+            type="button"
             className="menu-toggle"
             aria-label={menuOpen ? 'Tutup navigasi' : 'Buka navigasi'}
             aria-expanded={menuOpen}
@@ -317,7 +344,7 @@ export function Metrics({ items, note }) {
   );
 }
 
-export function About({ data }) {
+export function About({ data, onNavigate, isSummary = false }) {
   if (!data) return null;
   const features = data.features || [
     { icon: 'scale', title: 'Keseimbangan Total', description: 'Sintesis kurikulum Dikdasmen dengan penguatan muatan lokal diniyah, tahsin, dan fiqih aplikatif harian.' },
@@ -339,6 +366,18 @@ export function About({ data }) {
           {(data.paragraphs || []).map((paragraph, index) => (
             <p key={index}>{paragraph}</p>
           ))}
+          {isSummary && onNavigate && (
+            <div className="section-cta-wrap">
+              <button
+                type="button"
+                className="button button-primary button-large"
+                onClick={() => onNavigate('tentang')}
+              >
+                <span>Lihat Visi Misi & Profil Lengkap</span>
+                <ArrowRight size={16} />
+              </button>
+            </div>
+          )}
         </div>
 
         <div className="about-features-grid">
@@ -396,7 +435,7 @@ export function Values({ items }) {
   );
 }
 
-export function Program({ data }) {
+export function Program({ data, onNavigate, isSummary = false }) {
   if (!data) return null;
   return (
     <section className="section program-section" id="program">
@@ -436,12 +475,25 @@ export function Program({ data }) {
             </article>
           ))}
         </div>
+
+        {isSummary && onNavigate && (
+          <div className="section-cta-center">
+            <button
+              type="button"
+              className="button button-outline button-large"
+              onClick={() => onNavigate('program')}
+            >
+              <span>Lihat Detail Kurikulum & Keseharian 24 Jam</span>
+              <ArrowRight size={16} />
+            </button>
+          </div>
+        )}
       </div>
     </section>
   );
 }
 
-export function Facilities({ data }) {
+export function Facilities({ data, onNavigate, isSummary = false }) {
   if (!data) return null;
   return (
     <section className="section facilities-section" id="fasilitas">
@@ -477,6 +529,19 @@ export function Facilities({ data }) {
             </article>
           ))}
         </div>
+
+        {isSummary && onNavigate && (
+          <div className="section-cta-center">
+            <button
+              type="button"
+              className="button button-outline button-large"
+              onClick={() => onNavigate('fasilitas')}
+            >
+              <span>Jelajahi Seluruh Fasilitas & Kawasan 3D</span>
+              <ArrowRight size={16} />
+            </button>
+          </div>
+        )}
       </div>
     </section>
   );
@@ -870,32 +935,32 @@ export function Footer({ content, onNavigate }) {
           <h3>Navigasi Akademik</h3>
           <ul className="footer-nav-list">
             <li>
-              <button onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>
-                Beranda & Visi Misi
+              <button type="button" onClick={() => onNavigate ? onNavigate('home') : window.scrollTo({ top: 0, behavior: 'smooth' })}>
+                Beranda Utama
               </button>
             </li>
             <li>
-              <button onClick={() => document.getElementById('tentang')?.scrollIntoView({ behavior: 'smooth' })}>
-                Tentang & Nilai
+              <button type="button" onClick={() => onNavigate && onNavigate('tentang')}>
+                Profil & Visi Misi
               </button>
             </li>
             <li>
-              <button onClick={() => document.getElementById('program')?.scrollIntoView({ behavior: 'smooth' })}>
+              <button type="button" onClick={() => onNavigate && onNavigate('program')}>
                 Kurikulum & Program
               </button>
             </li>
             <li>
-              <button onClick={() => document.getElementById('fasilitas')?.scrollIntoView({ behavior: 'smooth' })}>
-                Fasilitas Terpadu
+              <button type="button" onClick={() => onNavigate && onNavigate('fasilitas')}>
+                Fasilitas & Kampus 3D
               </button>
             </li>
             <li>
-              <button onClick={() => document.getElementById('gedung-3d')?.scrollIntoView({ behavior: 'smooth' })}>
-                Visualisasi Gedung 3D
+              <button type="button" onClick={() => onNavigate && onNavigate('galeri')}>
+                Galeri Foto & Dokumentasi
               </button>
             </li>
             <li>
-              <button onClick={() => onNavigate && onNavigate('spmb')}>
+              <button type="button" onClick={() => onNavigate && onNavigate('spmb')}>
                 Penerimaan Santri Baru (SPMB)
               </button>
             </li>
@@ -1004,7 +1069,7 @@ export function Testimonials({ data }) {
   );
 }
 
-export function GallerySection({ data }) {
+export function GallerySection({ data, onNavigate, isSummary = false }) {
   const [selectedImg, setSelectedImg] = useState(null);
   const [activeCategory, setActiveCategory] = useState('Semua');
 
@@ -1015,6 +1080,7 @@ export function GallerySection({ data }) {
 
   const categories = ['Semua', ...new Set(items.map((it) => it.category).filter(Boolean))];
   const filteredItems = activeCategory === 'Semua' ? items : items.filter((it) => it.category === activeCategory);
+  const displayItems = isSummary ? filteredItems.slice(0, 6) : filteredItems;
 
   return (
     <section className="section gallery-section" id="galeri">
@@ -1045,7 +1111,7 @@ export function GallerySection({ data }) {
         )}
 
         <div className="gallery-grid">
-          {filteredItems.map((item, idx) => (
+          {displayItems.map((item, idx) => (
             <div
               className="gallery-card"
               key={idx}
@@ -1080,6 +1146,19 @@ export function GallerySection({ data }) {
             </div>
           ))}
         </div>
+
+        {isSummary && onNavigate && (
+          <div className="section-cta-center">
+            <button
+              type="button"
+              className="button button-gold button-large"
+              onClick={() => onNavigate('galeri')}
+            >
+              <span>Buka Galeri Foto Lengkap ({items.length} Foto)</span>
+              <ArrowRight size={16} />
+            </button>
+          </div>
+        )}
 
         {/* Lightbox Modal */}
         {selectedImg && (
@@ -1174,41 +1253,111 @@ export function BackToTop() {
   );
 }
 
-export default function HomeView({ content, onNavigate }) {
-  const sections = {
-    about: <About data={content.about} />,
-    values: <Values items={content.values || []} />,
-    program: <Program data={content.program} />,
-    routine: <DailyRoutine data={content.dailyRoutine} />,
-    facilities: <Facilities data={content.facilities} />,
-    campus3d: <CampusSection data={content.campus3d} />,
-    leadership: <Leadership data={content.leadership} />,
-    testimonials: <Testimonials data={content.testimonials} />,
-    gallery: <GallerySection data={content.gallery} />,
-    admissions: <AdmissionsCTA data={content.admissions} onNavigate={onNavigate} />,
-    faq: <FAQ data={content.faq} />,
-    location: <LocationSection data={content.contact} />,
-  };
+export default function HomeView({ content, onNavigate, page = 'home' }) {
+  if (page === 'tentang') {
+    return (
+      <div className="home-view-wrapper page-subpage">
+        <Header content={content} onNavigate={onNavigate} currentPage="tentang" />
+        <main>
+          <PageBanner
+            title="Profil & Visi Misi Sekolah"
+            subtitle="Mengenal Sejarah, Prinsip Nilai Luhur, dan Pengasuh Pondok Pesantren Shafa Wafa Tuban"
+            breadcrumb="Profil Sekolah"
+            onNavigate={onNavigate}
+          />
+          <About data={content.about} />
+          <Values items={content.values || []} />
+          <Leadership data={content.leadership} />
+          <AdmissionsCTA data={content.admissions} onNavigate={onNavigate} />
+        </main>
+        <Footer content={content} onNavigate={onNavigate} />
+        <FloatingWhatsApp content={content} />
+        <BackToTop />
+      </div>
+    );
+  }
 
-  const rawOrder = Array.isArray(content.sectionOrder) && content.sectionOrder.length > 0
-    ? content.sectionOrder
-    : defaultContent.sectionOrder;
-  const order = [
-    ...rawOrder,
-    ...defaultContent.sectionOrder.filter((k) => !rawOrder.includes(k)),
-  ];
+  if (page === 'program') {
+    return (
+      <div className="home-view-wrapper page-subpage">
+        <Header content={content} onNavigate={onNavigate} currentPage="program" />
+        <main>
+          <PageBanner
+            title="Program Pendidikan & Kurikulum"
+            subtitle="Pendidikan Formal Terpadu dengan Penguatan Adab, Tahfidz Al-Qur'an, Dwi-Bahasa, dan Kemandirian Santri"
+            breadcrumb="Program Pendidikan"
+            onNavigate={onNavigate}
+          />
+          <Program data={content.program} />
+          <DailyRoutine data={content.dailyRoutine} />
+          <AdmissionsCTA data={content.admissions} onNavigate={onNavigate} />
+        </main>
+        <Footer content={content} onNavigate={onNavigate} />
+        <FloatingWhatsApp content={content} />
+        <BackToTop />
+      </div>
+    );
+  }
 
+  if (page === 'fasilitas') {
+    return (
+      <div className="home-view-wrapper page-subpage">
+        <Header content={content} onNavigate={onNavigate} currentPage="fasilitas" />
+        <main>
+          <PageBanner
+            title="Fasilitas Kampus & Infrastruktur"
+            subtitle="Sarana Penunjang Pendidikan Lengkap: Masjid, Asrama, Ruang Belajar, dan Digital Twin 3D Kawasan Pesantren"
+            breadcrumb="Fasilitas Sekolah"
+            onNavigate={onNavigate}
+          />
+          <Facilities data={content.facilities} />
+          <CampusSection data={content.campus3d} />
+          <AdmissionsCTA data={content.admissions} onNavigate={onNavigate} />
+        </main>
+        <Footer content={content} onNavigate={onNavigate} />
+        <FloatingWhatsApp content={content} />
+        <BackToTop />
+      </div>
+    );
+  }
+
+  if (page === 'galeri') {
+    return (
+      <div className="home-view-wrapper page-subpage">
+        <Header content={content} onNavigate={onNavigate} currentPage="galeri" />
+        <main>
+          <PageBanner
+            title="Galeri Foto & Dokumentasi Aktivitas"
+            subtitle="Dokumentasi Visual Kegiatan Belajar Mengajar, Pembiasaan Harian, Prestasi, dan Sarana Prasarana Santri"
+            breadcrumb="Galeri Dokumentasi"
+            onNavigate={onNavigate}
+          />
+          <GallerySection data={content.gallery} isSummary={false} />
+          <AdmissionsCTA data={content.admissions} onNavigate={onNavigate} />
+        </main>
+        <Footer content={content} onNavigate={onNavigate} />
+        <FloatingWhatsApp content={content} />
+        <BackToTop />
+      </div>
+    );
+  }
+
+  // Default: Homepage (Ar-Rohmah Putra Executive Summary Model)
   return (
-    <div className="home-view-wrapper">
+    <div className="home-view-wrapper page-home">
       <Header content={content} onNavigate={onNavigate} currentPage="home" />
       <main>
         <Hero content={content} onNavigate={onNavigate} />
         <Metrics items={content.metrics || []} note={content.metricsNote} />
-        {order.map((key) =>
-          sections[key] && content.sectionVisibility?.[key] !== false ? (
-            <React.Fragment key={key}>{sections[key]}</React.Fragment>
-          ) : null
-        )}
+        <About data={content.about} onNavigate={onNavigate} isSummary={true} />
+        <Values items={content.values || []} />
+        <Program data={content.program} onNavigate={onNavigate} isSummary={true} />
+        <Facilities data={content.facilities} onNavigate={onNavigate} isSummary={true} />
+        <Testimonials data={content.testimonials} />
+        <GallerySection data={content.gallery} onNavigate={onNavigate} isSummary={true} />
+        <AdmissionsCTA data={content.admissions} onNavigate={onNavigate} />
+        <FAQ data={content.faq} />
+        <LocationSection data={content.contact} />
       </main>
       <Footer content={content} onNavigate={onNavigate} />
       <FloatingWhatsApp content={content} />
