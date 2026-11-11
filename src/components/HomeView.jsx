@@ -164,6 +164,16 @@ export function Brand({ content, compact = false }) {
 
 export function Header({ content, onNavigate, currentPage = 'home' }) {
   const [menuOpen, setMenuOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 40);
+    };
+    handleScroll();
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   const navItems = [
     { target: 'home', label: 'Beranda' },
@@ -181,85 +191,87 @@ export function Header({ content, onNavigate, currentPage = 'home' }) {
   };
 
   return (
-    <header className="site-header">
-      {/* Top Announcement Ribbon */}
-      {content.announcement?.visible && (
-        <div className="announcement-ribbon">
-          <div className="container announcement-ribbon-inner">
-            <div className="announcement-ribbon-left">
-              <span className="ribbon-pill">
-                <span className="ribbon-pulse" />
-                {content.announcement.pill || 'Tahun Ajaran 2027/2028'}
-              </span>
-              <p className="ribbon-text">{content.announcement.body}</p>
-            </div>
-            <div className="announcement-ribbon-right">
-              <span className="ribbon-status">
-                <ShieldCheck size={14} />
-                {content.announcement.statusLabel || 'Pendaftaran Dibuka'}
-              </span>
+    <div className={`site-header-wrapper ${content.announcement?.visible ? 'has-ribbon' : 'no-ribbon'} ${scrolled ? 'has-scrolled' : ''}`}>
+      <header className={`site-header ${scrolled ? 'is-scrolled' : ''}`}>
+        {/* Top Announcement Ribbon */}
+        {content.announcement?.visible && (
+          <div className="announcement-ribbon">
+            <div className="container announcement-ribbon-inner">
+              <div className="announcement-ribbon-left">
+                <span className="ribbon-pill">
+                  <span className="ribbon-pulse" />
+                  {content.announcement.pill || 'Tahun Ajaran 2027/2028'}
+                </span>
+                <p className="ribbon-text">{content.announcement.body}</p>
+              </div>
+              <div className="announcement-ribbon-right">
+                <span className="ribbon-status">
+                  <ShieldCheck size={14} />
+                  {content.announcement.statusLabel || 'Pendaftaran Dibuka'}
+                </span>
+              </div>
             </div>
           </div>
+        )}
+
+        {/* Main Navigation Bar */}
+        <div className="container header-main-inner">
+          <button
+            type="button"
+            className="brand-button"
+            onClick={() => onNavigate && onNavigate('home')}
+          >
+            <Brand content={content} />
+          </button>
+
+          <nav className={`main-nav ${menuOpen ? 'nav-open' : ''}`} aria-label="Navigasi utama">
+            {navItems.map((item) => {
+              const isActive = currentPage === item.target;
+              return (
+                <button
+                  key={item.target}
+                  type="button"
+                  className={`nav-link ${isActive ? 'is-active' : ''}`}
+                  onClick={() => handleNavClick(item.target)}
+                >
+                  {item.label}
+                </button>
+              );
+            })}
+            <button
+              type="button"
+              className="nav-mobile-cta"
+              onClick={() => {
+                setMenuOpen(false);
+                if (onNavigate) onNavigate('spmb');
+              }}
+            >
+              {content.header?.ctaLabel || 'Daftar SPMB Online'}
+            </button>
+          </nav>
+
+          <div className="header-actions">
+            <button
+              type="button"
+              className="button button-gold header-cta"
+              onClick={() => onNavigate && onNavigate('spmb')}
+            >
+              <span>{content.header?.ctaLabel || 'Daftar SPMB'}</span>
+              <ArrowUpRight size={16} />
+            </button>
+            <button
+              type="button"
+              className="menu-toggle"
+              aria-label={menuOpen ? 'Tutup navigasi' : 'Buka navigasi'}
+              aria-expanded={menuOpen}
+              onClick={() => setMenuOpen(!menuOpen)}
+            >
+              {menuOpen ? <X size={24} /> : <Menu size={24} />}
+            </button>
+          </div>
         </div>
-      )}
-
-      {/* Main Navigation Bar */}
-      <div className="container header-main-inner">
-        <button
-          type="button"
-          className="brand-button"
-          onClick={() => onNavigate && onNavigate('home')}
-        >
-          <Brand content={content} />
-        </button>
-
-        <nav className={`main-nav ${menuOpen ? 'nav-open' : ''}`} aria-label="Navigasi utama">
-          {navItems.map((item) => {
-            const isActive = currentPage === item.target;
-            return (
-              <button
-                key={item.target}
-                type="button"
-                className={`nav-link ${isActive ? 'is-active' : ''}`}
-                onClick={() => handleNavClick(item.target)}
-              >
-                {item.label}
-              </button>
-            );
-          })}
-          <button
-            type="button"
-            className="nav-mobile-cta"
-            onClick={() => {
-              setMenuOpen(false);
-              if (onNavigate) onNavigate('spmb');
-            }}
-          >
-            {content.header?.ctaLabel || 'Daftar SPMB Online'}
-          </button>
-        </nav>
-
-        <div className="header-actions">
-          <button
-            type="button"
-            className="button button-gold header-cta"
-            onClick={() => onNavigate && onNavigate('spmb')}
-          >
-            <span>{content.header?.ctaLabel || 'Daftar SPMB'}</span>
-            <ArrowUpRight size={16} />
-          </button>
-          <button
-            type="button"
-            className="menu-toggle"
-            aria-label={menuOpen ? 'Tutup navigasi' : 'Buka navigasi'}
-            aria-expanded={menuOpen}
-            onClick={() => setMenuOpen(!menuOpen)}
-          >
-            {menuOpen ? <X size={24} /> : <Menu size={24} />}
-          </button>
-        </div>
-      </div>
-    </header>
+      </header>
+    </div>
   );
 }
 
