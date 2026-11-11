@@ -1359,6 +1359,12 @@ export default function AdminPage({ onNavigate, onContentSaved }) {
                         placeholder="Kawasan / Fasilitas / Lingkungan"
                       />
                     </div>
+                    <SwitchField
+                      label="Tampilkan di Beranda (Foto Pilihan)"
+                      note="Foto ini akan menjadi salah satu kurasi terpilih yang tampil di halaman Beranda."
+                      checked={item.featured === true}
+                      onChange={(v) => changePath(`gallery.items.${idx}.featured`, v)}
+                    />
                   </div>
                 ))}
                 <button

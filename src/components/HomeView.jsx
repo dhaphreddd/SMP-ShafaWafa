@@ -1,7 +1,7 @@
 import React, { Suspense, lazy, useEffect, useRef, useState } from 'react';
 import {
   ArrowDown, ArrowRight, ArrowUpRight, BookOpen, Building2, CalendarDays, CheckCircle2,
-  ChevronDown, ChevronRight, Cpu, GraduationCap, HeartHandshake, Languages, Laptop, MapPin, Menu,
+  ChevronDown, ChevronLeft, ChevronRight, Cpu, GraduationCap, HeartHandshake, Languages, Laptop, MapPin, Menu,
   MessageCircle, ShieldCheck, Sparkles, Users, X, Mail, Phone, Instagram, ExternalLink,
   Compass, CircleHelp, Scale, Trees, Library, Hotel, Trophy,
   Clock, Check, Info, FileText, Lock, Eye, Radio, Smartphone, Monitor, ArrowUp, Quote, Image as ImageIcon,
@@ -1070,7 +1070,7 @@ export function Testimonials({ data }) {
 }
 
 export function GallerySection({ data, onNavigate, isSummary = false }) {
-  const [selectedImg, setSelectedImg] = useState(null);
+  const [lightboxIndex, setLightboxIndex] = useState(null);
   const [activeCategory, setActiveCategory] = useState('Semua');
 
   const gallery = data || defaultContent.gallery;
@@ -1078,9 +1078,42 @@ export function GallerySection({ data, onNavigate, isSummary = false }) {
   const items = gallery.items || [];
   if (!items.length) return null;
 
+  // Curated/featured photos for Beranda
+  const featuredItems = items.filter((it) => it.featured === true);
+  const curatedItems = featuredItems.length > 0 ? featuredItems : items.slice(0, 4);
+
   const categories = ['Semua', ...new Set(items.map((it) => it.category).filter(Boolean))];
   const filteredItems = activeCategory === 'Semua' ? items : items.filter((it) => it.category === activeCategory);
-  const displayItems = isSummary ? filteredItems.slice(0, 6) : filteredItems;
+  const displayItems = isSummary ? curatedItems : filteredItems;
+
+  useEffect(() => {
+    if (lightboxIndex !== null) {
+      const prevOverflow = document.body.style.overflow;
+      document.body.style.overflow = 'hidden';
+      const handleKeyDown = (e) => {
+        if (e.key === 'Escape') setLightboxIndex(null);
+        else if (e.key === 'ArrowLeft') setLightboxIndex((prev) => (prev > 0 ? prev - 1 : displayItems.length - 1));
+        else if (e.key === 'ArrowRight') setLightboxIndex((prev) => (prev < displayItems.length - 1 ? prev + 1 : 0));
+      };
+      window.addEventListener('keydown', handleKeyDown);
+      return () => {
+        document.body.style.overflow = prevOverflow;
+        window.removeEventListener('keydown', handleKeyDown);
+      };
+    }
+  }, [lightboxIndex, displayItems.length]);
+
+  const activeItem = lightboxIndex !== null ? displayItems[lightboxIndex] : null;
+
+  const showPrev = (e) => {
+    e.stopPropagation();
+    setLightboxIndex((prev) => (prev > 0 ? prev - 1 : displayItems.length - 1));
+  };
+
+  const showNext = (e) => {
+    e.stopPropagation();
+    setLightboxIndex((prev) => (prev < displayItems.length - 1 ? prev + 1 : 0));
+  };
 
   return (
     <section className="section gallery-section" id="galeri">
@@ -1092,10 +1125,15 @@ export function GallerySection({ data, onNavigate, isSummary = false }) {
             <span className="eyebrow-line" />
           </span>
           <h2>{gallery.title || 'Potret Kawasan & Aktivitas Santri'}</h2>
-          <p>{gallery.description}</p>
+          <p>
+            {isSummary
+              ? 'Dokumentasi pilihan lingkungan sekolah terpadu dan pembiasaan adab harian santri SMP Shafa Wafa Tuban.'
+              : gallery.description}
+          </p>
         </div>
 
-        {categories.length > 2 && (
+        {/* Filter bar is only displayed on the full gallery page */}
+        {!isSummary && categories.length > 2 && (
           <div className="gallery-filter-bar">
             {categories.map((cat) => (
               <button
@@ -1115,10 +1153,10 @@ export function GallerySection({ data, onNavigate, isSummary = false }) {
             <div
               className="gallery-card"
               key={idx}
-              onClick={() => setSelectedImg(item)}
+              onClick={() => setLightboxIndex(idx)}
               role="button"
               tabIndex={0}
-              onKeyDown={(e) => e.key === 'Enter' && setSelectedImg(item)}
+              onKeyDown={(e) => e.key === 'Enter' && setLightboxIndex(idx)}
             >
               <div className="gallery-media">
                 <img
@@ -1160,35 +1198,71 @@ export function GallerySection({ data, onNavigate, isSummary = false }) {
           </div>
         )}
 
-        {/* Lightbox Modal */}
-        {selectedImg && (
-          <div className="gallery-lightbox" onClick={() => setSelectedImg(null)} role="dialog" aria-modal="true">
-            <div className="gallery-lightbox-content" onClick={(e) => e.stopPropagation()}>
+        {/* Minimalist & Elegant Fullscreen Lightbox Modal ala Ar-Rohmah */}
+        {activeItem && (
+          <div
+            className="gallery-lightbox"
+            onClick={() => setLightboxIndex(null)}
+            role="dialog"
+            aria-modal="true"
+            aria-label="Tampilan Foto Layar Penuh"
+          >
+            <div className="lightbox-topbar" onClick={(e) => e.stopPropagation()}>
+              <span className="lightbox-counter">
+                {lightboxIndex + 1} / {displayItems.length}
+              </span>
               <button
                 type="button"
-                className="gallery-lightbox-close"
-                onClick={() => setSelectedImg(null)}
-                aria-label="Tutup foto"
+                className="lightbox-close-btn"
+                onClick={() => setLightboxIndex(null)}
+                aria-label="Tutup pratinjau foto"
               >
-                <X size={20} />
+                <X size={22} />
               </button>
-              <img
-                src={resolveAssetUrl(selectedImg.imageUrl)}
-                alt={selectedImg.title}
-                referrerPolicy="no-referrer"
-                className="gallery-lightbox-img"
-                onError={(e) => {
-                  const match = selectedImg.imageUrl && selectedImg.imageUrl.match(/[-\w]{25,}/);
-                  if (match && !e.currentTarget.dataset.fallbackTried) {
-                    e.currentTarget.dataset.fallbackTried = 'true';
-                    e.currentTarget.src = `https://lh3.googleusercontent.com/d/${match[0]}=w1600`;
-                  }
-                }}
-              />
-              <div className="gallery-lightbox-caption">
-                {selectedImg.category && <span className="gallery-badge">{selectedImg.category}</span>}
-                <h3>{selectedImg.title}</h3>
+            </div>
+
+            <div className="lightbox-stage" onClick={(e) => e.stopPropagation()}>
+              {displayItems.length > 1 && (
+                <button
+                  type="button"
+                  className="lightbox-nav-btn lightbox-nav-prev"
+                  onClick={showPrev}
+                  aria-label="Foto sebelumnya"
+                >
+                  <ChevronLeft size={28} />
+                </button>
+              )}
+
+              <div className="lightbox-media-wrap">
+                <img
+                  src={resolveAssetUrl(activeItem.imageUrl)}
+                  alt={activeItem.title || 'Foto Galeri'}
+                  referrerPolicy="no-referrer"
+                  className="lightbox-img"
+                  onError={(e) => {
+                    const match = activeItem.imageUrl && activeItem.imageUrl.match(/[-\w]{25,}/);
+                    if (match && !e.currentTarget.dataset.fallbackTried) {
+                      e.currentTarget.dataset.fallbackTried = 'true';
+                      e.currentTarget.src = `https://lh3.googleusercontent.com/d/${match[0]}=w1600`;
+                    }
+                  }}
+                />
+                <div className="lightbox-caption">
+                  {activeItem.category && <span className="lightbox-badge">{activeItem.category}</span>}
+                  <h3 className="lightbox-title">{activeItem.title}</h3>
+                </div>
               </div>
+
+              {displayItems.length > 1 && (
+                <button
+                  type="button"
+                  className="lightbox-nav-btn lightbox-nav-next"
+                  onClick={showNext}
+                  aria-label="Foto selanjutnya"
+                >
+                  <ChevronRight size={28} />
+                </button>
+              )}
             </div>
           </div>
         )}
