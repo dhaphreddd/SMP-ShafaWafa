@@ -4,7 +4,7 @@ export const defaultContent = {
     shortName: 'Shafa Wafa',
     tagline: 'Berilmu, Beradab, Bertumbuh',
     subLocation: 'Tegalagung, Semanding, Tuban',
-    logoUrl: '/images/logo.jpeg',
+    logoUrl: '/images/logo-sm.webp',
     faviconUrl: '/images/logo.jpeg',
   },
   theme: {

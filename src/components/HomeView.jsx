@@ -305,7 +305,6 @@ export function Hero({ content, onNavigate }) {
             src={masterplanSrc}
             alt=""
             fetchPriority="high"
-            decoding="async"
             className="hero-cinematic-img"
           />
         </picture>
