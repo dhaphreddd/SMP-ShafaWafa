@@ -36,7 +36,7 @@ function IconFor({ name, size = 22, className = '' }) {
   return <Icon size={size} strokeWidth={1.8} className={className} aria-hidden="true" />;
 }
 
-export function MobileCardSlider({ children, interval = 1000, className = '' }) {
+export function MobileCardSlider({ children, interval = 2000, className = '' }) {
   const [active, setActive] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
   const [isMobile, setIsMobile] = useState(() => typeof window !== 'undefined' && window.innerWidth <= 768);
@@ -266,134 +266,100 @@ export function Header({ content, onNavigate, currentPage = 'home' }) {
 export function Hero({ content, onNavigate }) {
   const hero = content.hero || {};
   const brand = content.brand || {};
-  const logoSrc = resolveAssetUrl(brand.logoUrl || '/images/logo.jpeg');
-  const masterplanSrc = resolveAssetUrl(hero.imageUrl || '/images/masterplan.jpeg');
+  const masterplanSrc = resolveAssetUrl(hero.imageUrl || '/images/masterplan.webp');
   const [showModal, setShowModal] = useState(false);
 
   return (
-    <section className="hero-section" id="beranda">
-      <div className="hero-glow" aria-hidden="true" />
-      <div className="container hero-grid">
-        <div className="hero-copy">
-          <div className="hero-badge">
+    <section className="hero-cinematic" id="beranda">
+      <div
+        className="hero-cinematic-bg"
+        style={{ backgroundImage: `url(${masterplanSrc})` }}
+        aria-hidden="true"
+      />
+      <div className="hero-cinematic-overlay" aria-hidden="true" />
+
+      <div className="container hero-cinematic-container">
+        <div className="hero-cinematic-content">
+          <div className="hero-badge-pill">
             <span className="hero-badge-dot" />
-            <span className="hero-badge-text">{hero.badge || hero.eyebrow}</span>
+            <span>{hero.badge || hero.eyebrow || 'PONDOK PESANTREN & SMP TERPADU'}</span>
           </div>
 
-          <h1 className="hero-title">
-            Tumbuh dalam ilmu.<br />
-            <span className="hero-title-accent">Kuat dalam adab.</span>
+          <h1 className="hero-cinematic-title">
+            <span className="title-main">{brand.name || 'SMP SHAFA WAFA'}</span>
+            <span className="title-sub">Islamic Boarding School</span>
           </h1>
 
-          <p className="hero-description">{hero.description}</p>
+          <p className="hero-cinematic-desc">
+            {hero.description ||
+              "Membentuk Generasi Qur'ani yang Beradab Luhur, Cerdas Berilmu, dan Berwawasan Global di Bawah Naungan Pesantren Modern Shafa Wafa Tuban."}
+          </p>
 
-          <div className="hero-actions">
+          <div className="hero-cinematic-btns">
             <button
-              className="button button-primary button-large"
+              type="button"
+              className="button button-gold button-large"
               onClick={() => onNavigate && onNavigate('spmb')}
             >
-              <span>{hero.primaryLabel || 'Informasi SPMB'}</span>
+              <span>{hero.primaryLabel || 'Daftar SPMB Online'}</span>
               <ArrowRight size={18} />
             </button>
             <button
-              className="button button-outline button-large"
-              onClick={() => document.getElementById(hero.secondaryTarget || 'program')?.scrollIntoView({ behavior: 'smooth' })}
+              type="button"
+              className="button button-outline-light button-large"
+              onClick={() => {
+                if (onNavigate) onNavigate('program');
+                else document.getElementById('program')?.scrollIntoView({ behavior: 'smooth' });
+              }}
             >
-              <span>{hero.secondaryLabel || 'Jelajahi Program'}</span>
+              <span>{hero.secondaryLabel || 'Lihat Program'}</span>
               <ArrowDown size={18} />
             </button>
           </div>
 
-          <div className="hero-identity-card">
-            <img
-              src={logoSrc}
-              alt={`Logo ${brand.name || 'SMP Shafa Wafa'}`}
-              width="44"
-              height="44"
-              decoding="async"
-              className="hero-identity-logo"
-            />
-            <div className="hero-identity-text">
-              <strong>{brand.name || 'SMP Shafa Wafa'} Tegalagung</strong>
-              <small>{hero.affiliation || 'Afiliasi Ponpes Ahlus-Shafa Wal-Wafa Tuban'}</small>
+          <div className="hero-cinematic-trust">
+            <div className="trust-pill">
+              <ShieldCheck size={15} />
+              <span>{hero.affiliation || 'Afiliasi Ponpes Ahlus-Shafa Wal-Wafa Tuban'}</span>
             </div>
-          </div>
-        </div>
-
-        <div className="hero-visual">
-          <div className="hero-image-card">
             <div
-              className="hero-image-wrap"
+              className="trust-pill"
               onClick={() => setShowModal(true)}
-              title="Klik untuk melihat masterplan ukuran penuh"
               role="button"
               tabIndex={0}
-              onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') setShowModal(true); }}
+              onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && setShowModal(true)}
             >
-              <picture className="hero-picture">
-                <source type="image/webp" media="(max-width: 768px)" srcSet={resolveAssetUrl('/images/masterplan-mobile.webp')} />
-                <source type="image/webp" srcSet={resolveAssetUrl('/images/masterplan.webp')} />
-                <img
-                  src={masterplanSrc}
-                  alt={hero.imageAlt || 'Masterplan Kawasan Sekolah Terpadu SMP Shafa Wafa'}
-                  fetchPriority="high"
-                  decoding="async"
-                  referrerPolicy="no-referrer"
-                  width="1103"
-                  height="872"
-                  className="hero-image"
-                  onError={(e) => {
-                    const match = hero.imageUrl && hero.imageUrl.match(/[-\w]{25,}/);
-                    if (match && !e.currentTarget.dataset.fallbackTried) {
-                      e.currentTarget.dataset.fallbackTried = 'true';
-                      e.currentTarget.src = `https://lh3.googleusercontent.com/d/${match[0]}=w1600`;
-                    }
-                  }}
-                />
-              </picture>
-              <div className="hero-zoom-badge">
-                <Eye size={14} />
-                <span>Lihat Gambar Penuh</span>
-              </div>
-            </div>
-            <div className="hero-floating-card">
-              <span className="floating-card-icon">
-                <Building2 size={22} />
-              </span>
-              <div className="floating-card-copy">
-                <strong>Masterplan Kawasan Sekolah Terpadu Shafa Wafa</strong>
-                <small>Tegalagung, Semanding, Kab. Tuban • Kawasan Sekolah Modern & Asri</small>
-              </div>
+              <Eye size={15} />
+              <span>Lihat Masterplan Kawasan</span>
             </div>
           </div>
         </div>
       </div>
 
       {showModal && (
-        <div className="image-lightbox-modal" onClick={() => setShowModal(false)} role="dialog" aria-modal="true">
-          <div className="lightbox-content" onClick={(e) => e.stopPropagation()}>
-            <div className="lightbox-header">
-              <div className="lightbox-title">
-                <Building2 size={18} />
-                <span>Masterplan Kawasan Sekolah Terpadu Shafa Wafa</span>
-              </div>
-              <button className="lightbox-close-btn" onClick={() => setShowModal(false)} aria-label="Tutup">
-                <X size={20} />
-              </button>
-            </div>
-            <div className="lightbox-image-wrap">
+        <div className="gallery-lightbox" onClick={() => setShowModal(false)} role="dialog" aria-modal="true">
+          <div className="lightbox-topbar" onClick={(e) => e.stopPropagation()}>
+            <span className="lightbox-counter">Masterplan Kawasan Sekolah Terpadu</span>
+            <button
+              type="button"
+              className="lightbox-close-btn"
+              onClick={() => setShowModal(false)}
+              aria-label="Tutup pratinjau masterplan"
+            >
+              <X size={22} />
+            </button>
+          </div>
+          <div className="lightbox-stage" onClick={(e) => e.stopPropagation()}>
+            <div className="lightbox-media-wrap">
               <img
                 src={masterplanSrc}
-                alt="Masterplan SMP Shafa Wafa Ukuran Penuh"
-                width="1103"
-                height="872"
-                decoding="async"
-                referrerPolicy="no-referrer"
-                className="lightbox-image"
+                alt="Masterplan Kawasan Sekolah Terpadu SMP Shafa Wafa"
+                className="lightbox-img"
               />
-            </div>
-            <div className="lightbox-footer">
-              <small>Rincian fasilitas, kapasitas 28 siswa/kelas, rasio ideal, luas lahan 8.500 m², dan gedung 3 lantai tertata asri dan terpadu.</small>
+              <div className="lightbox-caption">
+                <span className="lightbox-badge">Masterplan Terpadu</span>
+                <h3 className="lightbox-title">Kawasan Sekolah & Pesantren Shafa Wafa Tuban</h3>
+              </div>
             </div>
           </div>
         </div>
@@ -458,7 +424,7 @@ export function About({ data, onNavigate, isSummary = false }) {
           )}
         </div>
 
-        <MobileCardSlider className="about-features-grid" interval={1000}>
+        <MobileCardSlider className="about-features-grid" interval={2000}>
           {features.map((feat, i) => (
             <article className="about-feature-card" key={i}>
               <div className="feature-icon-wrap">
@@ -470,7 +436,7 @@ export function About({ data, onNavigate, isSummary = false }) {
           ))}
         </MobileCardSlider>
       </div>
-    </section>
+    </section >
   );
 }
 
@@ -490,7 +456,7 @@ export function Values({ items }) {
           </p>
         </div>
 
-        <MobileCardSlider className="values-bento-grid" interval={1000}>
+        <MobileCardSlider className="values-bento-grid" interval={2000}>
           {items.map((item, i) => (
             <article className="value-bento-card" key={`${item.title}-${i}`}>
               <div className="value-card-top">
@@ -509,7 +475,7 @@ export function Values({ items }) {
           ))}
         </MobileCardSlider>
       </div>
-    </section>
+    </section >
   );
 }
 
@@ -529,7 +495,7 @@ export function Program({ data, onNavigate, isSummary = false }) {
           <p>{data.description}</p>
         </div>
 
-        <MobileCardSlider className="program-grid" interval={1000}>
+        <MobileCardSlider className="program-grid" interval={2000}>
           {(data.items || []).map((item, i) => (
             <article className="program-card" key={`${item.title}-${i}`}>
               <div className="program-card-head">
@@ -567,7 +533,7 @@ export function Program({ data, onNavigate, isSummary = false }) {
           </div>
         )}
       </div>
-    </section>
+    </section >
   );
 }
 
@@ -590,7 +556,7 @@ export function Facilities({ data, onNavigate, isSummary = false }) {
           </div>
         </div>
 
-        <MobileCardSlider className="facilities-grid" interval={1000}>
+        <MobileCardSlider className="facilities-grid" interval={2000}>
           {(data.items || []).map((item, i) => (
             <article className="facility-card" key={`${item.title}-${i}`}>
               <div className="facility-card-top">
@@ -621,7 +587,7 @@ export function Facilities({ data, onNavigate, isSummary = false }) {
           </div>
         )}
       </div>
-    </section>
+    </section >
   );
 }
 
@@ -1123,7 +1089,7 @@ export function Testimonials({ data }) {
           <p>{testimonials.description}</p>
         </div>
 
-        <MobileCardSlider className="testimonials-grid" interval={1000}>
+        <MobileCardSlider className="testimonials-grid" interval={2000}>
           {(testimonials.items || []).map((item, idx) => (
             <article className="testimonial-card" key={idx}>
               <div className="testimonial-quote-icon">
@@ -1143,7 +1109,7 @@ export function Testimonials({ data }) {
           ))}
         </MobileCardSlider>
       </div>
-    </section>
+    </section >
   );
 }
 
@@ -1227,7 +1193,7 @@ export function GallerySection({ data, onNavigate, isSummary = false }) {
         )}
 
         {isSummary ? (
-          <MobileCardSlider className="gallery-grid" interval={1000}>
+          <MobileCardSlider className="gallery-grid" interval={2000}>
             {displayItems.map((item, idx) => (
               <div
                 className="gallery-card"
