@@ -476,7 +476,7 @@ export function Values({ items }) {
           </p>
         </div>
 
-        <MobileCardSlider className="values-bento-grid" interval={1000}>
+        <MobileCardSlider className="values-bento-grid" interval={2000}>
           {items.map((item, i) => (
             <article className="value-bento-card" key={`${item.title}-${i}`}>
               <div className="value-card-top">
@@ -514,7 +514,7 @@ export function Program({ data, onNavigate, isSummary = false }) {
           <p>{data.description}</p>
         </div>
 
-        <MobileCardSlider className="program-grid" interval={1000}>
+        <MobileCardSlider className="program-grid" interval={2000}>
           {(data.items || []).map((item, i) => (
             <article className="program-card" key={`${item.title}-${i}`}>
               <div className="program-card-head">
@@ -571,7 +571,7 @@ export function Facilities({ data, onNavigate, isSummary = false }) {
           <p>{data.description || 'Sarana dan prasarana terpadu untuk menunjang kenyamanan belajar, tahfidz, dan pembinaan karakter santri.'}</p>
         </div>
 
-        <MobileCardSlider className="facilities-grid" interval={1000}>
+        <MobileCardSlider className="facilities-grid" interval={2000}>
           {(data.items || []).map((item, i) => (
             <article className="facility-card" key={`${item.title}-${i}`}>
               <div className="facility-card-top">
