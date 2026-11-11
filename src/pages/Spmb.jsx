@@ -372,7 +372,7 @@ export default function SpmbPage({ content, onNavigate }) {
                       const msg = data.whatsappMessage || "Assalamu'alaikum Panitia SPMB SMP Shafa Wafa, saya ingin informasi mengenai pendaftaran santri baru.";
                       const url = clean ? `https://wa.me/${clean}?text=${encodeURIComponent(msg)}` : null;
                       return url ? (
-                        <>
+                        <div className="wa-direct-actions">
                           <a
                             href={url}
                             target="_blank"
@@ -384,7 +384,7 @@ export default function SpmbPage({ content, onNavigate }) {
                             <ArrowRight size={16} />
                           </a>
                           <span className="wa-number-badge">Nomor Resmi: <strong>{waNum}</strong></span>
-                        </>
+                        </div>
                       ) : (
                         <div className="inline-notice notice-neutral">
                           <CircleAlert size={18} />
