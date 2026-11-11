@@ -69,7 +69,16 @@
     </script>
   </head>
   <body>
-    <div id="root"></div>
+    <div id="root">
+      <div style="position:relative;min-height:85vh;overflow:hidden;background:#031811;">
+        <div class="hero-cinematic-bg" aria-hidden="true">
+          <picture>
+            <source media="(max-width: 640px)" srcset="/images/masterplan-mobile.webp" type="image/webp" />
+            <img src="/images/masterplan.webp" alt="" fetchpriority="high" class="hero-cinematic-img" />
+          </picture>
+        </div>
+      </div>
+    </div>
     <script type="module" src="/src/main.jsx"></script>
   </body>
 </html>
