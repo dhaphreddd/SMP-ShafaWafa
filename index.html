@@ -25,8 +25,9 @@
     <title>SMP Shafa Wafa | Berilmu, Beradab, Bertumbuh — Tuban</title>
     <link rel="icon" type="image/jpeg" href="/images/logo.jpeg" />
     
-    <!-- Hero Image Preload (WebP for ultra-fast LCP) -->
-    <link rel="preload" as="image" href="/images/masterplan.webp" type="image/webp" fetchpriority="high" />
+    <!-- Hero Image Preload (WebP responsive for ultra-fast LCP on mobile & desktop) -->
+    <link rel="preload" as="image" href="/images/masterplan-mobile.webp" type="image/webp" media="(max-width: 640px)" fetchpriority="high" />
+    <link rel="preload" as="image" href="/images/masterplan.webp" type="image/webp" media="(min-width: 641px)" fetchpriority="high" />
     
     <!-- Google Fonts: Non-render-blocking font loading -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />

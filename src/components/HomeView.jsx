@@ -298,11 +298,18 @@ export function Hero({ content, onNavigate }) {
 
   return (
     <section className="hero-cinematic" id="beranda">
-      <div
-        className="hero-cinematic-bg"
-        style={{ backgroundImage: `url(${masterplanSrc})` }}
-        aria-hidden="true"
-      />
+      <div className="hero-cinematic-bg" aria-hidden="true">
+        <picture>
+          <source media="(max-width: 640px)" srcSet={resolveAssetUrl('/images/masterplan-mobile.webp')} type="image/webp" />
+          <img
+            src={masterplanSrc}
+            alt=""
+            fetchPriority="high"
+            decoding="async"
+            className="hero-cinematic-img"
+          />
+        </picture>
+      </div>
       <div className="hero-cinematic-overlay" aria-hidden="true" />
 
       <div className="container hero-cinematic-container">
@@ -697,7 +704,7 @@ export function CampusSection({ data }) {
           <div className="mobile-architecture-card">
             <div className="mobile-arch-media">
               <img
-                src={resolveAssetUrl('/images/masterplan.jpeg')}
+                src={resolveAssetUrl('/images/masterplan-mobile.webp')}
                 alt="Arsitektur Gedung Sekolah SMP Shafa Wafa"
                 width="1103"
                 height="872"
@@ -737,7 +744,7 @@ export function CampusSection({ data }) {
             ) : (
               <div className="campus-loading campus-poster">
                 <img
-                  src={resolveAssetUrl('/images/masterplan.jpeg')}
+                  src={resolveAssetUrl('/images/masterplan.webp')}
                   alt="Pratinjau arsitektur gedung sekolah Shafa Wafa"
                   width="1103"
                   height="872"
