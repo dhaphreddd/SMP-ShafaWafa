@@ -318,10 +318,17 @@ export function Hero({ content, onNavigate }) {
           </div>
 
           <div className="hero-cinematic-trust">
-            <div className="trust-pill">
+            <a
+              href="https://shafawafa.my.id"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="trust-pill trust-pill-link"
+              title="Kunjungi Website Utama Yayasan Pondok Pesantren Ahlus-Shafa Wal-Wafa"
+            >
               <ShieldCheck size={15} />
               <span>{hero.affiliation || 'Afiliasi Ponpes Ahlus-Shafa Wal-Wafa Tuban'}</span>
-            </div>
+              <ExternalLink size={13} className="trust-external-icon" />
+            </a>
             <div
               className="trust-pill"
               onClick={() => setShowModal(true)}
@@ -445,10 +452,11 @@ export function Values({ items }) {
   return (
     <section className="section values-section">
       <div className="container">
-        <div className="section-heading centered">
+        <div className="section-heading text-center">
           <span className="eyebrow">
             <span className="eyebrow-line" />
             Pondasi Filosofis
+            <span className="eyebrow-line" />
           </span>
           <h2>4 Pilar Nilai Keunggulan</h2>
           <p>
@@ -456,7 +464,7 @@ export function Values({ items }) {
           </p>
         </div>
 
-        <MobileCardSlider className="values-bento-grid" interval={2000}>
+        <MobileCardSlider className="values-bento-grid" interval={1000}>
           {items.map((item, i) => (
             <article className="value-bento-card" key={`${item.title}-${i}`}>
               <div className="value-card-top">
@@ -475,7 +483,7 @@ export function Values({ items }) {
           ))}
         </MobileCardSlider>
       </div>
-    </section >
+    </section>
   );
 }
 
@@ -484,18 +492,17 @@ export function Program({ data, onNavigate, isSummary = false }) {
   return (
     <section className="section program-section" id="program">
       <div className="container">
-        <div className="section-heading split-heading">
-          <div>
-            <span className="eyebrow">
-              <span className="eyebrow-line" />
-              {data.eyebrow}
-            </span>
-            <h2>{data.title}</h2>
-          </div>
+        <div className="section-heading text-center">
+          <span className="eyebrow">
+            <span className="eyebrow-line" />
+            {data.eyebrow || 'PROGRAM PENDIDIKAN'}
+            <span className="eyebrow-line" />
+          </span>
+          <h2>{data.title}</h2>
           <p>{data.description}</p>
         </div>
 
-        <MobileCardSlider className="program-grid" interval={2000}>
+        <MobileCardSlider className="program-grid" interval={1000}>
           {(data.items || []).map((item, i) => (
             <article className="program-card" key={`${item.title}-${i}`}>
               <div className="program-card-head">
@@ -533,7 +540,7 @@ export function Program({ data, onNavigate, isSummary = false }) {
           </div>
         )}
       </div>
-    </section >
+    </section>
   );
 }
 
@@ -542,21 +549,17 @@ export function Facilities({ data, onNavigate, isSummary = false }) {
   return (
     <section className="section facilities-section" id="fasilitas">
       <div className="container">
-        <div className="section-heading split-heading">
-          <div>
-            <span className="eyebrow">
-              <span className="eyebrow-line" />
-              {data.eyebrow || 'Infrastruktur Sekolah'}
-            </span>
-            <h2>{data.title || 'Fasilitas Terpadu Sekolah & Pesantren'}</h2>
-          </div>
-          <div className="facilities-status-chip">
-            <ShieldCheck size={16} />
-            <span>{data.statusBadge || 'Standar Fasilitas Terpadu & Modern'}</span>
-          </div>
+        <div className="section-heading text-center">
+          <span className="eyebrow">
+            <span className="eyebrow-line" />
+            {data.eyebrow || 'INFRASTRUKTUR SEKOLAH'}
+            <span className="eyebrow-line" />
+          </span>
+          <h2>{data.title || 'Fasilitas Terpadu Sekolah & Pesantren'}</h2>
+          <p>{data.description || 'Sarana dan prasarana terpadu untuk menunjang kenyamanan belajar, tahfidz, dan pembinaan karakter santri.'}</p>
         </div>
 
-        <MobileCardSlider className="facilities-grid" interval={2000}>
+        <MobileCardSlider className="facilities-grid" interval={1000}>
           {(data.items || []).map((item, i) => (
             <article className="facility-card" key={`${item.title}-${i}`}>
               <div className="facility-card-top">
@@ -640,15 +643,17 @@ export function CampusSection({ data }) {
       {/* Anchor alias so older links pointing to #kampus-3d scroll here smoothly */}
       <span id="kampus-3d" style={{ position: 'relative', top: '-70px', display: 'block' }} aria-hidden="true" />
       <div className="container">
-        <div className="campus-heading">
-          <div>
-            <span className="eyebrow eyebrow-light">
-              <span className="eyebrow-line" />
-              {data.eyebrow || 'Visualisasi Ruang'}
-            </span>
-            <h2>{data.title || 'Visualisasi 3D Arsitektur Gedung Sekolah'}</h2>
-            <p>{data.description}</p>
-          </div>
+        <div className="section-heading text-center campus-heading-center">
+          <span className="eyebrow eyebrow-light">
+            <span className="eyebrow-line" />
+            {data.eyebrow || 'Visualisasi Ruang'}
+            <span className="eyebrow-line" />
+          </span>
+          <h2>{data.title || 'Visualisasi 3D Arsitektur Gedung Sekolah'}</h2>
+          <p>{data.description}</p>
+        </div>
+
+        <div className="campus-badge-center">
           <div className="campus-badge">
             <span className="campus-badge-icon">
               {isMobile ? <Smartphone size={22} /> : <Compass size={22} />}
@@ -840,28 +845,31 @@ export function FAQ({ data }) {
   if (!data) return null;
   return (
     <section className="section faq-section" id="faq">
-      <div className="container faq-grid">
-        <div className="faq-heading">
+      <div className="container">
+        <div className="section-heading text-center">
           <span className="eyebrow">
             <span className="eyebrow-line" />
-            {data.eyebrow || 'Pertanyaan Umum'}
+            {data.eyebrow || 'PERTANYAAN UMUM'}
+            <span className="eyebrow-line" />
           </span>
           <h2>{data.title || 'Keterbukaan Informasi & Tanya Jawab'}</h2>
           <p>{data.subtitle || 'Jawaban lugas dan transparan mengenai sistem pendidikan, kurikulum, serta pendaftaran santri baru SMP Shafa Wafa.'}</p>
         </div>
 
-        <div className="faq-list">
-          {(data.items || []).map((item, i) => (
-            <details className="faq-item" key={`${item.question}-${i}`}>
-              <summary>
-                <span>{item.question}</span>
-                <ChevronDown size={20} className="faq-chevron" />
-              </summary>
-              <div className="faq-answer">
-                <p>{item.answer}</p>
-              </div>
-            </details>
-          ))}
+        <div className="faq-wrap-center">
+          <div className="faq-list">
+            {(data.items || []).map((item, i) => (
+              <details className="faq-item" key={`${item.question}-${i}`}>
+                <summary>
+                  <span>{item.question}</span>
+                  <ChevronDown size={20} className="faq-chevron" />
+                </summary>
+                <div className="faq-answer">
+                  <p>{item.answer}</p>
+                </div>
+              </details>
+            ))}
+          </div>
         </div>
       </div>
     </section>
@@ -892,38 +900,47 @@ export function LocationSection({ data }) {
   if (!data) return null;
   return (
     <section className="section location-section" id="lokasi">
-      <div className="container location-grid">
-        <div className="location-copy">
+      <div className="container">
+        <div className="section-heading text-center">
           <span className="eyebrow">
             <span className="eyebrow-line" />
-            {data.eyebrow || 'Aksesibilitas Wilayah'}
+            {data.eyebrow || 'AKSESIBILITAS WILAYAH'}
+            <span className="eyebrow-line" />
           </span>
-          <h2>{data.title || 'Lokasi Sekolah Shafa Wafa'}</h2>
+          <h2>{data.title || 'Akses & Lokasi SMP Shafa Wafa'}</h2>
           <p>{data.description}</p>
-          <div className="location-points">
-            <div className="location-point">
-              <MapPin size={20} />
-              <span>{data.address}</span>
-            </div>
-            {data.proximity && (
+        </div>
+
+        <div className="location-grid">
+          <div className="location-copy">
+            <h3>Peta Kampus & Titik Kunjungan</h3>
+            <p className="location-desc-sub">
+              Terletak di kawasan asri dan tenang Kabupaten Tuban, terjangkau dari jalur arteri utama dengan aksesibilitas kendaraan yang nyaman.
+            </p>
+            <div className="location-points">
               <div className="location-point">
-                <Clock size={20} />
-                <span>{data.proximity}</span>
+                <MapPin size={20} />
+                <span>{data.address}</span>
               </div>
+              {data.proximity && (
+                <div className="location-point">
+                  <Clock size={20} />
+                  <span>{data.proximity}</span>
+                </div>
+              )}
+            </div>
+            {data.mapUrl && (
+              <a
+                href={data.mapUrl}
+                target="_blank"
+                rel="noreferrer"
+                className="button button-gold location-button"
+              >
+                <span>Buka di Google Maps</span>
+                <ExternalLink size={16} />
+              </a>
             )}
           </div>
-          {data.mapUrl && (
-            <a
-              href={data.mapUrl}
-              target="_blank"
-              rel="noreferrer"
-              className="button button-outline location-button"
-            >
-              <span>Buka di Google Maps</span>
-              <ExternalLink size={16} />
-            </a>
-          )}
-        </div>
 
         <div className="location-map-card">
           <iframe
@@ -954,7 +971,8 @@ export function LocationSection({ data }) {
           </div>
         </div>
       </div>
-    </section>
+    </div>
+  </section>
   );
 }
 
