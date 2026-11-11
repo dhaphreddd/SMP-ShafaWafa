@@ -84,6 +84,7 @@ export function MobileCardSlider({ children, interval = 2000, className = '' }) 
       className={`mobile-slider-container ${className ? `${className}-slider` : ''}`}
       onTouchStart={handleTouchStart}
       onTouchEnd={handleTouchEnd}
+      onTouchCancel={() => setIsPaused(false)}
       onMouseEnter={() => setIsPaused(true)}
       onMouseLeave={() => setIsPaused(false)}
     >
@@ -281,6 +282,20 @@ export function Hero({ content, onNavigate }) {
   const masterplanSrc = resolveAssetUrl(hero.imageUrl || '/images/masterplan.webp');
   const [showModal, setShowModal] = useState(false);
 
+  useEffect(() => {
+    if (!showModal) return undefined;
+    const prevOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape') setShowModal(false);
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => {
+      document.body.style.overflow = prevOverflow;
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [showModal]);
+
   return (
     <section className="hero-cinematic" id="beranda">
       <div
@@ -299,7 +314,7 @@ export function Hero({ content, onNavigate }) {
 
           <h1 className="hero-cinematic-title">
             <span className="title-main">{brand.name || 'SMP SHAFA WAFA'}</span>
-            <span className="title-sub">Islamic Boarding School</span>
+            <span className="title-sub">{hero.title || 'Islamic Boarding School'}</span>
           </h1>
 
           <p className="hero-cinematic-desc">
