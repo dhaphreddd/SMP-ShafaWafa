@@ -59,7 +59,7 @@ export default function App() {
     else url.searchParams.set('page', nextPage);
     window.history.pushState({}, '', `${url.pathname}${url.search}${url.hash}`);
     setPage(nextPage);
-    window.scrollTo({ top: 0, behavior: 'instant' });
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const handleContentSaved = (nextContent) => {

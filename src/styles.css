@@ -301,7 +301,15 @@ h1, h2, h3, h4, .brand-copy strong, .eyebrow {
   background: #0d2b1e;
   border-bottom: 1px solid rgba(201, 168, 76, 0.22);
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
-  transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: top 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+              width 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+              max-width 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+              border-radius 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+              background 0.35s ease,
+              border-color 0.35s ease,
+              box-shadow 0.4s ease,
+              padding 0.35s ease;
+  will-change: top, width, border-radius;
 }
 
 .announcement-ribbon {
@@ -438,6 +446,7 @@ h1, h2, h3, h4, .brand-copy strong, .eyebrow {
   align-items: center;
   justify-content: space-between;
   gap: 28px;
+  transition: height 0.4s cubic-bezier(0.16, 1, 0.3, 1), padding 0.35s ease;
 }
 
 .brand-button {
@@ -446,6 +455,11 @@ h1, h2, h3, h4, .brand-copy strong, .eyebrow {
   display: inline-flex;
   align-items: center;
   text-align: left;
+  transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+.brand-button:active {
+  transform: scale(0.97);
 }
 
 .brand {
@@ -536,8 +550,28 @@ h1, h2, h3, h4, .brand-copy strong, .eyebrow {
   letter-spacing: 0.04em;
   padding: 10px 4px;
   position: relative;
-  transition: color 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  transition: color 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94), opacity 0.2s ease, transform 0.15s ease;
   cursor: pointer;
+}
+
+.nav-link:active {
+  transform: scale(0.95);
+}
+
+.page-transition-content {
+  animation: pageFadeIn 0.32s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: opacity, transform;
+}
+
+@keyframes pageFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .nav-link::after {

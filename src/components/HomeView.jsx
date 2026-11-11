@@ -652,8 +652,8 @@ export function CampusSection({ data }) {
 
   return (
     <section className="section campus-section" id="gedung-3d" ref={sectionRef}>
-      {/* Anchor alias so older links pointing to #kampus-3d scroll here smoothly */}
-      <span id="kampus-3d" style={{ position: 'relative', top: '-70px', display: 'block' }} aria-hidden="true" />
+      {/* Anchor alias so links pointing to 3D architectural visualizer scroll here smoothly */}
+      <span id="gedung-sekolah-3d" style={{ position: 'relative', top: '-70px', display: 'block' }} aria-hidden="true" />
       <div className="container">
         <div className="section-heading text-center campus-heading-center">
           <span className="eyebrow eyebrow-light">
@@ -925,7 +925,7 @@ export function LocationSection({ data }) {
 
         <div className="location-grid">
           <div className="location-copy">
-            <h3>Peta Kampus & Titik Kunjungan</h3>
+            <h3>Peta Sekolah & Titik Kunjungan</h3>
             <p className="location-desc-sub">
               Terletak di kawasan asri dan tenang Kabupaten Tuban, terjangkau dari jalur arteri utama dengan aksesibilitas kendaraan yang nyaman.
             </p>
@@ -1025,7 +1025,7 @@ export function Footer({ content, onNavigate }) {
             </li>
             <li>
               <button type="button" onClick={() => onNavigate && onNavigate('fasilitas')}>
-                Fasilitas & Kampus 3D
+                Fasilitas & Gedung Sekolah 3D
               </button>
             </li>
             <li>
@@ -1441,110 +1441,87 @@ export function BackToTop() {
 }
 
 export default function HomeView({ content, onNavigate, page = 'home' }) {
-  if (page === 'tentang') {
-    return (
-      <div className="home-view-wrapper page-subpage">
-        <Header content={content} onNavigate={onNavigate} currentPage="tentang" />
-        <main>
-          <PageBanner
-            title="Profil & Visi Misi Sekolah"
-            subtitle="Mengenal Sejarah, Prinsip Nilai Luhur, dan Pengasuh Pondok Pesantren Shafa Wafa Tuban"
-            breadcrumb="Profil Sekolah"
-            onNavigate={onNavigate}
-          />
-          <About data={content.about} />
-          <Values items={content.values || []} />
-          <Leadership data={content.leadership} />
-          <AdmissionsCTA data={content.admissions} onNavigate={onNavigate} />
-        </main>
-        <Footer content={content} onNavigate={onNavigate} />
-        <FloatingWhatsApp content={content} />
-        <BackToTop />
-      </div>
-    );
-  }
+  const isSubpage = page !== 'home' && ['profil', 'tentang', 'program', 'fasilitas', 'galeri'].includes(page);
 
-  if (page === 'program') {
-    return (
-      <div className="home-view-wrapper page-subpage">
-        <Header content={content} onNavigate={onNavigate} currentPage="program" />
-        <main>
-          <PageBanner
-            title="Program Pendidikan & Kurikulum"
-            subtitle="Pendidikan Formal Terpadu dengan Penguatan Adab, Tahfidz Al-Qur'an, Dwi-Bahasa, dan Kemandirian Santri"
-            breadcrumb="Program Pendidikan"
-            onNavigate={onNavigate}
-          />
-          <Program data={content.program} />
-          <DailyRoutine data={content.dailyRoutine} />
-          <AdmissionsCTA data={content.admissions} onNavigate={onNavigate} />
-        </main>
-        <Footer content={content} onNavigate={onNavigate} />
-        <FloatingWhatsApp content={content} />
-        <BackToTop />
-      </div>
-    );
-  }
-
-  if (page === 'fasilitas') {
-    return (
-      <div className="home-view-wrapper page-subpage">
-        <Header content={content} onNavigate={onNavigate} currentPage="fasilitas" />
-        <main>
-          <PageBanner
-            title="Fasilitas Kampus & Infrastruktur"
-            subtitle="Sarana Penunjang Pendidikan Lengkap: Masjid, Asrama, Ruang Belajar, dan Digital Twin 3D Kawasan Pesantren"
-            breadcrumb="Fasilitas Sekolah"
-            onNavigate={onNavigate}
-          />
-          <Facilities data={content.facilities} />
-          <CampusSection data={content.campus3d} />
-          <AdmissionsCTA data={content.admissions} onNavigate={onNavigate} />
-        </main>
-        <Footer content={content} onNavigate={onNavigate} />
-        <FloatingWhatsApp content={content} />
-        <BackToTop />
-      </div>
-    );
-  }
-
-  if (page === 'galeri') {
-    return (
-      <div className="home-view-wrapper page-subpage">
-        <Header content={content} onNavigate={onNavigate} currentPage="galeri" />
-        <main>
-          <PageBanner
-            title="Galeri Foto & Dokumentasi Aktivitas"
-            subtitle="Dokumentasi Visual Kegiatan Belajar Mengajar, Pembiasaan Harian, Prestasi, dan Sarana Prasarana Santri"
-            breadcrumb="Galeri Dokumentasi"
-            onNavigate={onNavigate}
-          />
-          <GallerySection data={content.gallery} isSummary={false} />
-          <AdmissionsCTA data={content.admissions} onNavigate={onNavigate} />
-        </main>
-        <Footer content={content} onNavigate={onNavigate} />
-        <FloatingWhatsApp content={content} />
-        <BackToTop />
-      </div>
-    );
-  }
-
-  // Default: Homepage (Ar-Rohmah Putra Executive Summary Model)
   return (
-    <div className="home-view-wrapper page-home">
-      <Header content={content} onNavigate={onNavigate} currentPage="home" />
-      <main>
-        <Hero content={content} onNavigate={onNavigate} />
-        <Metrics items={content.metrics || []} note={content.metricsNote} />
-        <About data={content.about} onNavigate={onNavigate} isSummary={true} />
-        <Values items={content.values || []} />
-        <Program data={content.program} onNavigate={onNavigate} isSummary={true} />
-        <Facilities data={content.facilities} onNavigate={onNavigate} isSummary={true} />
-        <Testimonials data={content.testimonials} />
-        <GallerySection data={content.gallery} onNavigate={onNavigate} isSummary={true} />
-        <AdmissionsCTA data={content.admissions} onNavigate={onNavigate} />
-        <FAQ data={content.faq} />
-        <LocationSection data={content.contact} />
+    <div className={`home-view-wrapper ${isSubpage ? 'page-subpage' : 'page-home'}`}>
+      <Header
+        content={content}
+        onNavigate={onNavigate}
+        currentPage={page === 'tentang' ? 'profil' : page}
+      />
+      <main className="page-transition-content" key={page}>
+        {(page === 'profil' || page === 'tentang') && (
+          <>
+            <PageBanner
+              title="Profil & Visi Misi Sekolah"
+              subtitle="Mengenal Sejarah, Prinsip Nilai Luhur, dan Pengasuh Pondok Pesantren Shafa Wafa Tuban"
+              breadcrumb="Profil Sekolah"
+              onNavigate={onNavigate}
+            />
+            <About data={content.about} />
+            <Values items={content.values || []} />
+            <Leadership data={content.leadership} />
+            <AdmissionsCTA data={content.admissions} onNavigate={onNavigate} />
+          </>
+        )}
+
+        {page === 'program' && (
+          <>
+            <PageBanner
+              title="Program Pendidikan & Kurikulum"
+              subtitle="Pendidikan Formal Terpadu dengan Penguatan Adab, Tahfidz Al-Qur'an, Dwi-Bahasa, dan Kemandirian Santri"
+              breadcrumb="Program Pendidikan"
+              onNavigate={onNavigate}
+            />
+            <Program data={content.program} />
+            <DailyRoutine data={content.dailyRoutine} />
+            <AdmissionsCTA data={content.admissions} onNavigate={onNavigate} />
+          </>
+        )}
+
+        {page === 'fasilitas' && (
+          <>
+            <PageBanner
+              title="Fasilitas Sekolah & Infrastruktur"
+              subtitle="Sarana Penunjang Pendidikan Lengkap: Masjid, Asrama, Ruang Belajar, dan Digital Twin 3D Kawasan Sekolah"
+              breadcrumb="Fasilitas Sekolah"
+              onNavigate={onNavigate}
+            />
+            <Facilities data={content.facilities} />
+            <CampusSection data={content.campus3d} />
+            <AdmissionsCTA data={content.admissions} onNavigate={onNavigate} />
+          </>
+        )}
+
+        {page === 'galeri' && (
+          <>
+            <PageBanner
+              title="Galeri Foto & Dokumentasi Aktivitas"
+              subtitle="Dokumentasi Visual Kegiatan Belajar Mengajar, Pembiasaan Harian, Prestasi, dan Sarana Prasarana Santri"
+              breadcrumb="Galeri Dokumentasi"
+              onNavigate={onNavigate}
+            />
+            <GallerySection data={content.gallery} isSummary={false} />
+            <AdmissionsCTA data={content.admissions} onNavigate={onNavigate} />
+          </>
+        )}
+
+        {!isSubpage && (
+          <>
+            <Hero content={content} onNavigate={onNavigate} />
+            <Metrics items={content.metrics || []} note={content.metricsNote} />
+            <About data={content.about} onNavigate={onNavigate} isSummary={true} />
+            <Values items={content.values || []} />
+            <Program data={content.program} onNavigate={onNavigate} isSummary={true} />
+            <Facilities data={content.facilities} onNavigate={onNavigate} isSummary={true} />
+            <Testimonials data={content.testimonials} />
+            <GallerySection data={content.gallery} onNavigate={onNavigate} isSummary={true} />
+            <AdmissionsCTA data={content.admissions} onNavigate={onNavigate} />
+            <FAQ data={content.faq} />
+            <LocationSection data={content.contact} />
+          </>
+        )}
       </main>
       <Footer content={content} onNavigate={onNavigate} />
       <FloatingWhatsApp content={content} />

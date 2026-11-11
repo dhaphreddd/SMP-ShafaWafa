@@ -445,7 +445,7 @@ export function mergeContent(base, incoming) {
   if (Array.isArray(base?.header?.navItems) && Array.isArray(result?.header?.navItems)) {
     const seen = new Set();
     result.header.navItems = result.header.navItems.filter((item) => {
-      if (!item || item.target === 'kampus-3d' || item.label?.toLowerCase() === 'kampus 3d') return false;
+      if (!item || item.target === 'kampus-3d' || item.target === 'gedung-3d' || item.label?.toLowerCase().includes('kampus')) return false;
       if (seen.has(item.target)) return false;
       seen.add(item.target);
       return true;
