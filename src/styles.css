@@ -4047,3 +4047,66 @@ h1, h2, h3, h4, .brand-copy strong, .eyebrow {
   }
 }
 
+/* ==========================================================================
+   Mobile Auto-Slider for Long Card Grids (1s Interval Looping)
+   ========================================================================== */
+.mobile-slider-container {
+  width: 100%;
+  position: relative;
+  overflow: hidden;
+  margin: 12px 0;
+}
+
+.mobile-slider-track-wrap {
+  width: 100%;
+  overflow: hidden;
+  border-radius: var(--radius-lg, 16px);
+}
+
+.mobile-slider-track {
+  display: flex;
+  width: 100%;
+  transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+  will-change: transform;
+}
+
+.mobile-slider-item {
+  flex: 0 0 100%;
+  min-width: 100%;
+  box-sizing: border-box;
+  padding: 4px 2px;
+  display: flex;
+}
+
+.mobile-slider-item > * {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+}
+
+.mobile-slider-dots {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  margin-top: 16px;
+}
+
+.mobile-slider-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: rgba(11, 81, 59, 0.22);
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.mobile-slider-dot.is-active {
+  width: 22px;
+  border-radius: 50px;
+  background: var(--accent, #fdb102);
+  box-shadow: 0 2px 6px rgba(253, 177, 2, 0.4);
+}
+

@@ -36,6 +36,84 @@ function IconFor({ name, size = 22, className = '' }) {
   return <Icon size={size} strokeWidth={1.8} className={className} aria-hidden="true" />;
 }
 
+export function MobileCardSlider({ children, interval = 1000, className = '' }) {
+  const [active, setActive] = useState(0);
+  const [isPaused, setIsPaused] = useState(false);
+  const [isMobile, setIsMobile] = useState(() => typeof window !== 'undefined' && window.innerWidth <= 768);
+  const touchStartX = useRef(0);
+  const childArray = React.Children.toArray(children);
+  const count = childArray.length;
+
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth <= 768);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  useEffect(() => {
+    if (!isMobile || count <= 1 || isPaused) return;
+    const timer = setInterval(() => {
+      setActive((prev) => (prev + 1) % count);
+    }, interval);
+    return () => clearInterval(timer);
+  }, [isMobile, count, interval, isPaused]);
+
+  if (!isMobile || count <= 1) {
+    return <div className={className}>{children}</div>;
+  }
+
+  const handleTouchStart = (e) => {
+    setIsPaused(true);
+    touchStartX.current = e.touches[0].clientX;
+  };
+
+  const handleTouchEnd = (e) => {
+    setIsPaused(false);
+    const diff = touchStartX.current - e.changedTouches[0].clientX;
+    if (Math.abs(diff) > 40) {
+      if (diff > 0) {
+        setActive((prev) => (prev + 1) % count);
+      } else {
+        setActive((prev) => (prev - 1 + count) % count);
+      }
+    }
+  };
+
+  return (
+    <div
+      className={`mobile-slider-container ${className ? `${className}-slider` : ''}`}
+      onTouchStart={handleTouchStart}
+      onTouchEnd={handleTouchEnd}
+      onMouseEnter={() => setIsPaused(true)}
+      onMouseLeave={() => setIsPaused(false)}
+    >
+      <div className="mobile-slider-track-wrap">
+        <div
+          className="mobile-slider-track"
+          style={{ transform: `translateX(-${active * 100}%)` }}
+        >
+          {childArray.map((child, idx) => (
+            <div className="mobile-slider-item" key={idx}>
+              {child}
+            </div>
+          ))}
+        </div>
+      </div>
+      <div className="mobile-slider-dots">
+        {childArray.map((_, idx) => (
+          <button
+            key={idx}
+            type="button"
+            className={`mobile-slider-dot ${active === idx ? 'is-active' : ''}`}
+            onClick={() => setActive(idx)}
+            aria-label={`Pindah ke slide ${idx + 1}`}
+          />
+        ))}
+      </div>
+    </div>
+  );
+}
+
 export function PageBanner({ title, subtitle, breadcrumb, onNavigate }) {
   return (
     <div className="page-hero-banner">
@@ -380,7 +458,7 @@ export function About({ data, onNavigate, isSummary = false }) {
           )}
         </div>
 
-        <div className="about-features-grid">
+        <MobileCardSlider className="about-features-grid" interval={1000}>
           {features.map((feat, i) => (
             <article className="about-feature-card" key={i}>
               <div className="feature-icon-wrap">
@@ -390,7 +468,7 @@ export function About({ data, onNavigate, isSummary = false }) {
               <p>{feat.description}</p>
             </article>
           ))}
-        </div>
+        </MobileCardSlider>
       </div>
     </section>
   );
@@ -412,7 +490,7 @@ export function Values({ items }) {
           </p>
         </div>
 
-        <div className="values-bento-grid">
+        <MobileCardSlider className="values-bento-grid" interval={1000}>
           {items.map((item, i) => (
             <article className="value-bento-card" key={`${item.title}-${i}`}>
               <div className="value-card-top">
@@ -429,7 +507,7 @@ export function Values({ items }) {
               </div>
             </article>
           ))}
-        </div>
+        </MobileCardSlider>
       </div>
     </section>
   );
@@ -451,7 +529,7 @@ export function Program({ data, onNavigate, isSummary = false }) {
           <p>{data.description}</p>
         </div>
 
-        <div className="program-grid">
+        <MobileCardSlider className="program-grid" interval={1000}>
           {(data.items || []).map((item, i) => (
             <article className="program-card" key={`${item.title}-${i}`}>
               <div className="program-card-head">
@@ -474,7 +552,7 @@ export function Program({ data, onNavigate, isSummary = false }) {
               )}
             </article>
           ))}
-        </div>
+        </MobileCardSlider>
 
         {isSummary && onNavigate && (
           <div className="section-cta-center">
@@ -512,7 +590,7 @@ export function Facilities({ data, onNavigate, isSummary = false }) {
           </div>
         </div>
 
-        <div className="facilities-grid">
+        <MobileCardSlider className="facilities-grid" interval={1000}>
           {(data.items || []).map((item, i) => (
             <article className="facility-card" key={`${item.title}-${i}`}>
               <div className="facility-card-top">
@@ -528,7 +606,7 @@ export function Facilities({ data, onNavigate, isSummary = false }) {
               </div>
             </article>
           ))}
-        </div>
+        </MobileCardSlider>
 
         {isSummary && onNavigate && (
           <div className="section-cta-center">
@@ -1045,7 +1123,7 @@ export function Testimonials({ data }) {
           <p>{testimonials.description}</p>
         </div>
 
-        <div className="testimonials-grid">
+        <MobileCardSlider className="testimonials-grid" interval={1000}>
           {(testimonials.items || []).map((item, idx) => (
             <article className="testimonial-card" key={idx}>
               <div className="testimonial-quote-icon">
@@ -1063,7 +1141,7 @@ export function Testimonials({ data }) {
               </div>
             </article>
           ))}
-        </div>
+        </MobileCardSlider>
       </div>
     </section>
   );
@@ -1148,42 +1226,81 @@ export function GallerySection({ data, onNavigate, isSummary = false }) {
           </div>
         )}
 
-        <div className="gallery-grid">
-          {displayItems.map((item, idx) => (
-            <div
-              className="gallery-card"
-              key={idx}
-              onClick={() => setLightboxIndex(idx)}
-              role="button"
-              tabIndex={0}
-              onKeyDown={(e) => e.key === 'Enter' && setLightboxIndex(idx)}
-            >
-              <div className="gallery-media">
-                <img
-                  src={resolveAssetUrl(item.imageUrl)}
-                  alt={item.title || 'Foto Dokumentasi'}
-                  loading="lazy"
-                  decoding="async"
-                  referrerPolicy="no-referrer"
-                  className="gallery-img"
-                  onError={(e) => {
-                    const match = item.imageUrl && item.imageUrl.match(/[-\w]{25,}/);
-                    if (match && !e.currentTarget.dataset.fallbackTried) {
-                      e.currentTarget.dataset.fallbackTried = 'true';
-                      e.currentTarget.src = `https://lh3.googleusercontent.com/d/${match[0]}=w1600`;
-                    }
-                  }}
-                />
-                <div className="gallery-overlay">
-                  {item.category && <span className="gallery-badge">{item.category}</span>}
-                  <div className="gallery-card-info">
-                    <h3>{item.title}</h3>
+        {isSummary ? (
+          <MobileCardSlider className="gallery-grid" interval={1000}>
+            {displayItems.map((item, idx) => (
+              <div
+                className="gallery-card"
+                key={idx}
+                onClick={() => setLightboxIndex(idx)}
+                role="button"
+                tabIndex={0}
+                onKeyDown={(e) => e.key === 'Enter' && setLightboxIndex(idx)}
+              >
+                <div className="gallery-media">
+                  <img
+                    src={resolveAssetUrl(item.imageUrl)}
+                    alt={item.title || 'Foto Dokumentasi'}
+                    loading="lazy"
+                    decoding="async"
+                    referrerPolicy="no-referrer"
+                    className="gallery-img"
+                    onError={(e) => {
+                      const match = item.imageUrl && item.imageUrl.match(/[-\w]{25,}/);
+                      if (match && !e.currentTarget.dataset.fallbackTried) {
+                        e.currentTarget.dataset.fallbackTried = 'true';
+                        e.currentTarget.src = `https://lh3.googleusercontent.com/d/${match[0]}=w1600`;
+                      }
+                    }}
+                  />
+                  <div className="gallery-overlay">
+                    {item.category && <span className="gallery-badge">{item.category}</span>}
+                    <div className="gallery-card-info">
+                      <h3>{item.title}</h3>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
-          ))}
-        </div>
+            ))}
+          </MobileCardSlider>
+        ) : (
+          <div className="gallery-grid">
+            {displayItems.map((item, idx) => (
+              <div
+                className="gallery-card"
+                key={idx}
+                onClick={() => setLightboxIndex(idx)}
+                role="button"
+                tabIndex={0}
+                onKeyDown={(e) => e.key === 'Enter' && setLightboxIndex(idx)}
+              >
+                <div className="gallery-media">
+                  <img
+                    src={resolveAssetUrl(item.imageUrl)}
+                    alt={item.title || 'Foto Dokumentasi'}
+                    loading="lazy"
+                    decoding="async"
+                    referrerPolicy="no-referrer"
+                    className="gallery-img"
+                    onError={(e) => {
+                      const match = item.imageUrl && item.imageUrl.match(/[-\w]{25,}/);
+                      if (match && !e.currentTarget.dataset.fallbackTried) {
+                        e.currentTarget.dataset.fallbackTried = 'true';
+                        e.currentTarget.src = `https://lh3.googleusercontent.com/d/${match[0]}=w1600`;
+                      }
+                    }}
+                  />
+                  <div className="gallery-overlay">
+                    {item.category && <span className="gallery-badge">{item.category}</span>}
+                    <div className="gallery-card-info">
+                      <h3>{item.title}</h3>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
 
         {isSummary && onNavigate && (
           <div className="section-cta-center">
