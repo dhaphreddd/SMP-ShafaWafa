@@ -42,7 +42,7 @@ export const defaultContent = {
     floatingWa: true,
   },
   announcement: {
-    visible: true,
+    visible: false,
     pill: 'Tahun Ajaran 2027/2028',
     eyebrow: 'INFORMASI PENERIMAAN',
     title: 'Penerimaan Santri Baru Tahun Ajaran 2027/2028',

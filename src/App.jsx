@@ -9,7 +9,13 @@ const AdminPage = lazy(() => import('./pages/Admin.jsx'));
 const SpmbPage = lazy(() => import('./pages/Spmb.jsx'));
 
 export default function App() {
-  const [content, setContent] = useState(defaultContent);
+  const [content, setContent] = useState(() => {
+    try {
+      const cached = localStorage.getItem('smp_site_content_cache');
+      if (cached) return JSON.parse(cached);
+    } catch {}
+    return defaultContent;
+  });
   const [contentLoading, setContentLoading] = useState(true);
   const [page, setPage] = useState(() => new URLSearchParams(window.location.search).get('page') || 'home');
   const [contentSource, setContentSource] = useState('local');
@@ -21,6 +27,9 @@ export default function App() {
         if (active) {
           setContent(result.content);
           setContentSource(result.source);
+          try {
+            localStorage.setItem('smp_site_content_cache', JSON.stringify(result.content));
+          } catch {}
         }
       })
       .finally(() => {
